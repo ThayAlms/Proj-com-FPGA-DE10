@@ -1,0 +1,15 @@
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+
+ENTITY prioriedade IS
+	PORT (
+		A, B, C : IN STD_LOGIC;
+		X, Y    : OUT STD_LOGIC
+	);
+END prioriedade;
+
+ARCHITECTURE FLUXO_DE_DADOS OF prioriedade IS
+BEGIN
+	X <= A OR B;
+	Y <= A OR (NOT B AND C);
+END FLUXO_DE_DADOS;

@@ -1,0 +1,77 @@
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+
+ENTITY me_carro IS
+	PORT (
+		INI, CK, CK_EN, X, Y : IN STD_LOGIC;
+		Q : OUT STD_LOGIC_VECTOR (3 DOWNTO 0);
+		L : OUT STD_LOGIC_VECTOR (5 DOWNTO 0)
+	);
+END me_carro;
+
+ARCHITECTURE BEHAVIOR OF me_carro IS
+	TYPE ME IS (E0, E1, E2, E3, E4, E5); -- Definido os estados corretamente
+	SIGNAL E : ME;
+	SIGNAL XY : STD_LOGIC_VECTOR (1 DOWNTO 0);
+
+BEGIN
+	XY <= X & Y;
+
+	PROCESS (CK, CK_EN, INI)
+	BEGIN 	
+		IF (INI = '0') THEN 
+			E <= E0;
+		ELSIF (CK'EVENT AND CK = '1' AND CK_EN = '1') THEN
+			CASE E IS 
+				WHEN E0 =>
+					IF 	(XY = "00") THEN E <= E0;
+					ELSIF (XY = "01") THEN E <= E1;
+					ELSIF (XY = "10") THEN E <= E3;
+					END IF;
+				
+				WHEN E1 =>
+					IF 	(XY = "00") THEN E <= E1;
+					ELSIF (XY = "11") THEN E <= E5;
+					ELSIF (XY = "01") THEN E <= E2;
+					END IF;
+				
+				WHEN E2 =>
+					IF 	(XY = "10") THEN E <= E2;
+					ELSIF (XY = "00") THEN E <= E1;
+					ELSIF (XY = "10") THEN E <= E3;
+					END IF;
+
+				WHEN E3 =>
+					IF 	(XY = "10") THEN E <= E3;
+					ELSIF (XY = "00") THEN E <= E2;
+					ELSIF (XY = "01") THEN E <= E5;
+					END IF;
+
+				WHEN E4 =>
+					IF 	(XY = "11") THEN E <= E1;
+					ELSIF (XY = "00") THEN E <= E3;
+					ELSIF (XY = "01") THEN E <= E5;
+					END IF;
+
+				WHEN E5 =>
+					IF 	(XY = "01") THEN E <= E0;
+					ELSIF (XY = "11") THEN E <= E4;
+					ELSIF (XY = "00") THEN E <= E4;
+					END IF;
+			END CASE;
+		END IF;
+	END PROCESS;
+
+	PROCESS (E)
+	BEGIN
+		CASE E IS
+			WHEN E0 => Q <= "0000"; L <= "000000"; -- 	L=0 (PAR)  , Q =0
+			WHEN E1 => Q <= "0001"; L <= "000001"; -- 	L=1 (IMPAR), Q =0
+			WHEN E2 => Q <= "0010"; L <= "000010"; -- 	L=2 (PAR)  , Q =0
+			WHEN E3 => Q <= "0100"; L <= "000100"; -- 	L=4 (PAR)  , Q =0
+			WHEN E4 => Q <= "0111"; L <= "000101"; -- 	L=5 (IMPAR), Q =0
+			WHEN E5 => Q <= "1001"; L <= "000111"; -- 	L=7 (IMPAR), Q =0
+		END CASE;
+	END PROCESS;
+
+END BEHAVIOR;

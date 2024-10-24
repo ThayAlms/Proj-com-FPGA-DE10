@@ -1,0 +1,14 @@
+LIBRARY IEEE;
+USE IEEE. STD_LOGIC_1164. ALL;
+
+entity Prioridade IS
+	port (
+	A,B, C: IN STD LOGIC;
+	X , Y : OUT STD LOGIC):
+end Prioridade;
+
+ ARCHITECTURE FLUXO DE DADOS OF Prioridade IS
+日begin
+	X <= A OR B;
+	Y <= AR OR (NOT(B) AND C);
+end FLUXO_DE_ DADOS;
